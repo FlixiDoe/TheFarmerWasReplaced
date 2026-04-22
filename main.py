@@ -10,11 +10,11 @@ while True:
 		harvest()
 		if(get_pos_x()==0):
 			plant(Entities.Grass)
-		elif(get_pos_x()==1 or get_pos_x() == 2 ):
+		elif(get_pos_x()==1 or get_pos_x() == 2 or get_pos_x() ==7  ):
 			
 			plant(Entities.Bush)
 			
-		elif(get_pos_x()==3 and carrotRessurces() ):
+		elif(get_pos_x()==3  ):
 			plantWithRessurces(Entities.Carrot)
 
 		elif(get_pos_x()==4 or get_pos_x()==5 or get_pos_x()==6 or get_pos_x()==5  ):
@@ -32,6 +32,7 @@ while True:
 			return True	
 		else:
 			return False
+			
 			
 				
 	def plantWithTill(Entitiy):
