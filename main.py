@@ -38,9 +38,15 @@ def plantPumpkin():
 	if (pumpkinRessurces()):
 		ensureSoil()
 		plant(Entities.Pumpkin)
-		do_a_flip()
+		#i = 0
 		while not can_harvest():
+
 			plant(Entities.Pumpkin)
+			needsWater()
+			#print(i)
+		#i += 1
+			
+
 	else:
 		plantGrass()
 
@@ -64,10 +70,14 @@ def PumkinPlace():
 	else:
 		plantPumpkin()
 
+
+def needsWater():
+	if (get_water() < 0.5 and num_items(Items.Water) >= 1):
+		use_item(Items.Water)
+
 while True:
 	for i in range(get_world_size()):
-		if (get_water() < 0.5 and num_items(Items.Water) >= 1):
-			use_item(Items.Water)
+		
 
 		if (can_harvest()):
 			harvest()
