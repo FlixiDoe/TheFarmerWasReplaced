@@ -46,5 +46,6 @@ def plantTree():
 
 def plantSunflower():
 	if(unlockSystem.entitiyIsUnlocked):
-		unlockSystem.entitiyIsUnlocked(Unlocks.Sunflowers)
-		print("TODO")
+		if (ressurceSystem.SunflowerRessurces()):
+		
+			print("TODO")

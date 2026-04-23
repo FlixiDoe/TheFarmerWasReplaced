@@ -1,32 +1,10 @@
 import costSystem
-import plantSystem
-import placeSystem
-
+import movingSystem
 clear()
 change_hat(Hats.Wizard_Hat)
 
 	
 while True:
 	costSystem.setCosts()
-	for i in range(get_world_size()):
-		
-		if (can_harvest()):
-			harvest()
+	movingSystem.startMove()
 
-		x = get_pos_x()
-
-		
-		if (x == 1 or x == 10 or x== 13 or x==15):
-			plantSystem.plantTree()
-		elif (x == 2 or x == 8 or x == 9 or x==12 or x==14 ):
-			plantSystem.plantCarrot()
-		elif (x == 3 or x == 4 or x == 5 or x == 6 or x == 7):
-			placeSystem.PumkinPlace(5)
-	
-	
-		else:
-			plantSystem.plantGrass()
-
-		move(North)
-
-	move(East)
