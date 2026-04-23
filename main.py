@@ -3,6 +3,7 @@ change_hat(Hats.Wizard_Hat)
 
 isTree = False
 
+
 def carrotRessurces():
 	if (num_items(Items.Hay) >= 16 and num_items(Items.Wood) >= 16):
 		return True
@@ -38,7 +39,7 @@ def plantPumpkin():
 	if (pumpkinRessurces()):
 		ensureSoil()
 		plant(Entities.Pumpkin)
-		#i = 0
+		i = 0
 		while not can_harvest():
 
 			plant(Entities.Pumpkin)
@@ -63,9 +64,11 @@ def TreePflanzen():
 def PumkinPlace():
 	pumkinBlock = get_pos_y()
 	maximum = get_world_size()
-	numrowsgone = maximum % 5
+	numrowsgone = (maximum % 6 )
 
-	if ((pumkinBlock % 5 == 0 and pumkinBlock != 0) or pumkinBlock > maximum - numrowsgone):
+	if(get_pos_y()==0):
+		pumkinBlock= pumkinBlock+1
+	if ((pumkinBlock % 6 == 0 ) or pumkinBlock >= maximum - numrowsgone):
 		plantGrass()
 	else:
 		plantPumpkin()
@@ -75,6 +78,12 @@ def needsWater():
 	if (get_water() < 0.5 and num_items(Items.Water) >= 1):
 		use_item(Items.Water)
 
+def skipRows(rows):
+	for i in range(rows):
+		move(East)
+
+
+skipRows(3)
 while True:
 	for i in range(get_world_size()):
 		
