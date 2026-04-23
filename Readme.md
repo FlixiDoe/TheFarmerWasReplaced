@@ -75,6 +75,14 @@ The project expects the game-provided builtins such as:
 - `plantSunflower()` is currently only a placeholder.
 - Several names in the code still reflect early versions, for example `PumkinPlace` and `ressurceSystem`.
 
+## Documentation Maintenance
+
+This repository includes a GitHub Actions workflow that refreshes the documentation timestamp every day and pushes the change automatically.
+
+<!-- AUTO_DOCS_UPDATE_START -->
+Last automated documentation update: 2026-04-23 18:21 Europe/Berlin
+<!-- AUTO_DOCS_UPDATE_END -->
+
 ## Planned improvements
 
 - finish sunflower support
