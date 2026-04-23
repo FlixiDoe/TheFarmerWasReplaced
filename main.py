@@ -15,40 +15,35 @@ def pumpkinRessurces():
 	else:
 		return False
 
-def plantWithTill(entity):
+def ensureSoil():
 	if (get_ground_type() != Grounds.Soil):
 		till()
-	plant(entity)
 
-def plantGrassWithTill():
-	if (get_ground_type() != Grounds.Soil):
-		till()
-		#
-	plant(Entities.Carrot)
+def ensureGround():
+	if (get_ground_type() == Grounds.Soil):
+		untill()
+
+def plantGrass():
+	ensureGround()
+	plant(Entities.Grass)
 
 def plantCarrot():
 	if (carrotRessurces()):
-		if (get_ground_type() != Grounds.Soil):
-			till()
+		ensureSoil()
 		plant(Entities.Carrot)
 	else:
-		if (get_ground_type() != Grounds.Soil):
-			till()
-			#tmp
-		plant(Entities.Carrot)
+		plantGrass()
 
 def plantPumpkin():
 	if (pumpkinRessurces()):
-		if (get_ground_type() != Grounds.Soil):
-			till()
+		ensureSoil()
 		plant(Entities.Pumpkin)
 	else:
-		if (get_ground_type() != Grounds.Soil):
-			till()
-		plant(Entities.Grass)
+		plantGrass()
 
 def TreePflanzen():
 	global isTree
+	ensureGround()
 	if (isTree):
 		plant(Entities.Bush)
 		isTree = False
@@ -62,7 +57,7 @@ def PumkinPlace():
 	numrowsgone = maximum % 5
 
 	if ((pumkinBlock % 5 == 0 and pumkinBlock != 0) or pumkinBlock > maximum - numrowsgone):
-		plantGrassWithTill()
+		plantGrass()
 	else:
 		plantPumpkin()
 
@@ -77,7 +72,7 @@ while True:
 		x = get_pos_x()
 
 		if (x == 0 or x == 11):
-			plantGrassWithTill()
+			plantGrass()
 		elif (x == 1 or x == 10):
 			TreePflanzen()
 		elif (x == 2 or x == 8 or x == 9):
