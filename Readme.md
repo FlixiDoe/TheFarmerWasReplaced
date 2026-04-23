@@ -1,91 +1,70 @@
 # The Farmer Was Replaced Automation System
 
-This repository contains my modular farming script setup for **The Farmer Was Replaced**.
-The goal is to keep the main loop small and move crop logic, unlock checks, and resource handling into separate modules.
+This repository contains my modular farming setup for **The Farmer Was Replaced**.
+The README is partly generated from the current source files so the documentation stays aligned with the actual code.
 
-## What the script does
+## Repository Notes
 
-`main.py` runs an endless farm loop and assigns crop types by column:
+- `main.py` is the entry point for the farm loop.
+- `__builtins__.py` and `save.json` stay local and are intentionally excluded from Git.
+- The generated section below is refreshed by GitHub Actions every day and can also be updated manually by running `python scripts/update_readme_stamp.py`.
 
-- `x == 0` or `11`: grass
-- `x == 1`, `10`, `13`, `15`: trees
-- `x == 2`, `8`, `9`, `12`, `14`: carrots
-- `x == 3` to `7`: pumpkin area with spacing logic
-- everything else: grass fallback
+<!-- AUTO_DOCS_CONTENT_START -->
+## Generated Snapshot
 
-Before each full pass, the script refreshes crop costs with `costSystem.setCosts()`.
-If a tile is harvestable, it gets harvested before replanting.
+Generated from the current repository files on 2026-04-23 18:24 Europe/Berlin.
 
-## Project structure
+### Main Loop
 
-- `main.py`: main farm loop and field layout
-- `plantSystem.py`: planting functions for grass, carrots, pumpkins, trees, and the unfinished sunflower stub
-- `placeSystem.py`: decides where pumpkins may be planted inside the pumpkin zone
-- `unlockSystem.py`: checks whether items or entities are unlocked
-- `ressurceSystem.py`: verifies whether enough materials are available for carrots and pumpkins
-- `costSystem.py`: reads current in-game crop costs
-- `needSystem.py`: uses water and fertilizer if unlocked and available
-- `ensureSystem.py`: switches between ground and soil
-- `helpers.py`: small movement helper
+- Entry point: `main.py`.
+- Imports: `costSystem`, `plantSystem`, `placeSystem`.
+- Refreshes crop costs once per full world pass with `costSystem.setCosts()`.
+- Harvests a tile before replanting when `can_harvest()` is true.
+- Moves `North` inside the inner loop.
+- Moves `East` after completing one vertical sweep.
 
-## How it works
+### Field Layout
 
-### Crop handling
+- `x == 0 or x == 11` -> `plantSystem.plantGrass(...)`.
+- `x == 1 or x == 10 or x== 13 or x==15` -> `plantSystem.plantTree(...)`.
+- `x == 2 or x == 8 or x == 9 or x==12 or x==14` -> `plantSystem.plantCarrot(...)`.
+- `x == 3 or x == 4 or x == 5 or x == 6 or x == 7` -> `placeSystem.PumkinPlace(...)`.
+- Fallback route -> `plantSystem.plantGrass(...)`.
 
-- Grass is used as the safe fallback if something is locked or resources are missing.
-- Carrots are only planted when hay and wood are available.
-- Pumpkins are only planted when enough carrots are available.
-- Trees alternate between `Tree` and `Bush` using the global `isTree` flag.
+### Module Overview
 
-### Pumpkin placement
+- `main.py`
+  Imports: `costSystem`, `plantSystem`, `placeSystem`.
+  Functions: none.
+- `plantSystem.py`
+  Imports: `helpers`, `ressurceSystem`, `needSystem`, `unlockSystem`, `ensureSystem`.
+  Functions: `plantGrass`, `plantCarrot`, `plantPumpkin`, `plantTree`, `plantSunflower`.
+- `placeSystem.py`
+  Imports: `plantSystem`.
+  Functions: `PumkinPlace`.
+- `unlockSystem.py`
+  Imports: `plantSystem`.
+  Functions: `ItemIsUnlocked`, `entitiyIsUnlocked`.
+- `costSystem.py`
+  Imports: none.
+  Functions: `setCosts`, `setCarrotCosts`, `setPumkinCosts`.
+- `ressurceSystem.py`
+  Imports: `costSystem`.
+  Functions: `pumpkinRessurces`, `carrotRessurces`.
+- `needSystem.py`
+  Imports: `unlockSystem`.
+  Functions: `needsWater`, `needsFetrtilizer`.
+- `ensureSystem.py`
+  Imports: none.
+  Functions: `ensureSoil`, `ensureGround`.
+- `helpers.py`
+  Imports: none.
+  Functions: `skipRows`.
 
-Pumpkins are not planted on every tile in their column range.
-`placeSystem.PumkinPlace(5)` creates gaps based on the current `y` position and world size so the pumpkin section stays structured.
+### Detected Maintenance Notes
 
-### Unlock and safety behavior
-
-If an entity is still locked, the system falls back to planting grass.
-That keeps the farm running even when a save is still progressing.
-
-## Requirements
-
-This code is written for the in-game Python-like environment of **The Farmer Was Replaced**.
-It is not meant to run as normal desktop Python.
-
-The project expects the game-provided builtins such as:
-
-- `plant`
-- `harvest`
-- `move`
-- `get_cost`
-- `num_items`
-- `num_unlocked`
-- `get_world_size`
-
-## Usage
-
-1. Copy the repository files into your save script folder.
-2. Use `main.py` as the entry point.
-3. Adjust the column layout in `main.py` if you want a different farm design.
-4. Expand the helper systems as new unlocks become available.
-
-## Notes
-
-- `__builtins__.py` and `save.json` are intentionally kept local and are not part of the Git history.
-- `plantSunflower()` is currently only a placeholder.
-- Several names in the code still reflect early versions, for example `PumkinPlace` and `ressurceSystem`.
-
-## Documentation Maintenance
-
-This repository includes a GitHub Actions workflow that refreshes the documentation timestamp every day and pushes the change automatically.
-
-<!-- AUTO_DOCS_UPDATE_START -->
-Last automated documentation update: 2026-04-23 18:21 Europe/Berlin
-<!-- AUTO_DOCS_UPDATE_END -->
-
-## Planned improvements
-
-- finish sunflower support
-- improve naming consistency
-- make field layout configurable instead of hard-coded by column
-- extend fertilizer handling for pumpkins
+- `plantSystem.py` contains a TODO marker.
+- Current naming inconsistencies detected in code: `PumkinPlace`, `pumkinCosts`, `ressurceSystem`, `entitiyIsUnlocked`, `needsFetrtilizer`.
+- Local-only files excluded from Git: `__builtins__.py`, `save.json`.
+- This section is regenerated by `.github/workflows/daily-docs.yml`.
+<!-- AUTO_DOCS_CONTENT_END -->

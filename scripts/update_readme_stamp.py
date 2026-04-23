@@ -1,40 +1,177 @@
 from datetime import datetime
 from pathlib import Path
+import re
 from zoneinfo import ZoneInfo
 
 
 README_PATH = Path("Readme.md")
-START_MARKER = "<!-- AUTO_DOCS_UPDATE_START -->"
-END_MARKER = "<!-- AUTO_DOCS_UPDATE_END -->"
 TIMEZONE = ZoneInfo("Europe/Berlin")
+START_MARKER = "<!-- AUTO_DOCS_CONTENT_START -->"
+END_MARKER = "<!-- AUTO_DOCS_CONTENT_END -->"
+MODULE_FILES = [
+    "main.py",
+    "plantSystem.py",
+    "placeSystem.py",
+    "unlockSystem.py",
+    "costSystem.py",
+    "ressurceSystem.py",
+    "needSystem.py",
+    "ensureSystem.py",
+    "helpers.py",
+]
+LOCAL_ONLY_FILES = ["__builtins__.py", "save.json"]
 
 
-def build_replacement() -> str:
-    timestamp = datetime.now(TIMEZONE).strftime("%Y-%m-%d %H:%M Europe/Berlin")
-    return (
-        f"{START_MARKER}\n"
-        f"Last automated documentation update: {timestamp}\n"
-        f"{END_MARKER}"
-    )
+def read_file(path: str) -> str:
+    return Path(path).read_text(encoding="utf-8")
+
+
+def parse_imports(content: str) -> list[str]:
+    return re.findall(r"^import\s+([A-Za-z_][A-Za-z0-9_]*)", content, re.MULTILINE)
+
+
+def parse_functions(content: str) -> list[str]:
+    return re.findall(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", content, re.MULTILINE)
+
+
+def format_inline_list(items: list[str]) -> str:
+    if not items:
+        return "none"
+    return ", ".join(f"`{item}`" for item in items)
+
+
+def parse_route_rules(content: str) -> list[tuple[str, str]]:
+    lines = content.splitlines()
+    routes: list[tuple[str, str]] = []
+
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        if (stripped.startswith("if ") or stripped.startswith("elif ")) and "x ==" in stripped:
+            condition = stripped.split("(", 1)[1].rsplit(")", 1)[0].strip()
+            action = find_next_action(lines, index + 1)
+            routes.append((condition, action))
+        elif stripped == "else:":
+            action = find_next_action(lines, index + 1)
+            routes.append(("fallback", action))
+
+    return routes
+
+
+def find_next_action(lines: list[str], start_index: int) -> str:
+    call_pattern = re.compile(r"([A-Za-z_][A-Za-z0-9_\.]*)\((.*)\)")
+
+    for line in lines[start_index:]:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        match = call_pattern.match(stripped)
+        if match:
+            return f"`{match.group(1)}(...)`"
+        return f"`{stripped}`"
+
+    return "`unknown`"
+
+
+def build_main_loop_section(main_content: str) -> list[str]:
+    lines = [
+        "## Generated Snapshot",
+        "",
+        f"Generated from the current repository files on {datetime.now(TIMEZONE).strftime('%Y-%m-%d %H:%M Europe/Berlin')}.",
+        "",
+        "### Main Loop",
+        "",
+        "- Entry point: `main.py`.",
+        f"- Imports: {format_inline_list(parse_imports(main_content))}.",
+    ]
+
+    if "costSystem.setCosts()" in main_content:
+        lines.append("- Refreshes crop costs once per full world pass with `costSystem.setCosts()`.")
+    if "can_harvest()" in main_content and "harvest()" in main_content:
+        lines.append("- Harvests a tile before replanting when `can_harvest()` is true.")
+    if "move(North)" in main_content:
+        lines.append("- Moves `North` inside the inner loop.")
+    if "move(East)" in main_content:
+        lines.append("- Moves `East` after completing one vertical sweep.")
+
+    lines.extend(["", "### Field Layout", ""])
+    for condition, action in parse_route_rules(main_content):
+        if condition == "fallback":
+            lines.append(f"- Fallback route -> {action}.")
+        else:
+            lines.append(f"- `{condition}` -> {action}.")
+
+    return lines
+
+
+def build_module_section() -> list[str]:
+    lines = ["", "### Module Overview", ""]
+
+    for module_path in MODULE_FILES:
+        content = read_file(module_path)
+        imports = parse_imports(content)
+        functions = parse_functions(content)
+        lines.append(f"- `{module_path}`")
+        lines.append(f"  Imports: {format_inline_list(imports)}.")
+        lines.append(f"  Functions: {format_inline_list(functions)}.")
+
+    return lines
+
+
+def build_maintenance_notes() -> list[str]:
+    lines = ["", "### Detected Maintenance Notes", ""]
+
+    todo_hits: list[str] = []
+    for module_path in MODULE_FILES:
+        content = read_file(module_path)
+        if "TODO" in content:
+            todo_hits.append(f"`{module_path}` contains a TODO marker.")
+
+    naming_hits = [
+        "`PumkinPlace`",
+        "`pumkinCosts`",
+        "`ressurceSystem`",
+        "`entitiyIsUnlocked`",
+        "`needsFetrtilizer`",
+    ]
+
+    if todo_hits:
+        lines.extend(f"- {item}" for item in todo_hits)
+    lines.append(f"- Current naming inconsistencies detected in code: {', '.join(naming_hits)}.")
+    lines.append(f"- Local-only files excluded from Git: {format_inline_list(LOCAL_ONLY_FILES)}.")
+    lines.append("- This section is regenerated by `.github/workflows/daily-docs.yml`.")
+
+    return lines
+
+
+def build_generated_block() -> str:
+    main_content = read_file("main.py")
+    lines: list[str] = []
+    lines.extend(build_main_loop_section(main_content))
+    lines.extend(build_module_section())
+    lines.extend(build_maintenance_notes())
+    return "\n".join(lines).rstrip()
 
 
 def main() -> int:
-    content = README_PATH.read_text(encoding="utf-8")
-
-    start_index = content.find(START_MARKER)
-    end_index = content.find(END_MARKER)
+    readme = README_PATH.read_text(encoding="utf-8")
+    start_index = readme.find(START_MARKER)
+    end_index = readme.find(END_MARKER)
     if start_index == -1 or end_index == -1 or end_index < start_index:
-        raise RuntimeError("README markers for automated docs update were not found.")
+        raise RuntimeError("README auto-doc markers were not found.")
 
     end_index += len(END_MARKER)
-    updated = content[:start_index] + build_replacement() + content[end_index:]
+    generated = f"{START_MARKER}\n{build_generated_block()}\n{END_MARKER}"
+    updated = readme[:start_index] + generated + readme[end_index:]
 
-    if updated == content:
+    if updated == readme:
         print("README already up to date.")
         return 0
 
     README_PATH.write_text(updated, encoding="utf-8")
-    print("Updated README documentation timestamp.")
+    print("Updated README content from source files.")
     return 0
 
 

@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Refresh README timestamp
+      - name: Generate README from source files
         run: python scripts/update_readme_stamp.py
 
       - name: Commit and push changes
@@ -31,5 +31,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Readme.md
           git diff --cached --quiet && exit 0
-          git commit -m "docs: daily README update"
+          git commit -m "docs: daily README sync"
           git push
