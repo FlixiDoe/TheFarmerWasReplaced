@@ -69,18 +69,18 @@ def PumkinPlace(size):
 	if(get_pos_y()==0):
 		pumkinBlock= pumkinBlock+1
 	
-	if(get_pos_y)<6:
-		
-		if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
-			plantGrass()
-		else:
-			plantPumpkin()
+	#if(get_pos_y())<6:
+	#	pumkinBlock= pumkinBlock-1
+		#if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
+			#plantGrass()
+		#else:
+		#	plantPumpkin()
 
+	#else:
+	if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
+		plantGrass()
 	else:
-		if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
-			plantGrass()
-		else:
-			plantPumpkin()
+		plantPumpkin()
 
 
 def needsWater():
@@ -92,7 +92,7 @@ def skipRows(rows):
 		move(East)
 
 
-#skipRows(3)
+skipRows(3)
 while True:
 	for i in range(get_world_size()):
 		
