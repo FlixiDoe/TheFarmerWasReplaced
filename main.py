@@ -40,13 +40,8 @@ def plantPumpkin():
 		plant(Entities.Pumpkin)
 		i = 0
 		while not can_harvest():
-
 			plant(Entities.Pumpkin)
 			needsWater()
-			#print(i)
-		#i += 1
-			
-
 	else:
 		plantGrass()
 
@@ -61,23 +56,12 @@ def TreePflanzen():
 		isTree = True
 
 def PumkinPlace(size):
-	size = size +1
 	pumkinBlock = get_pos_y()
 	maximum = get_world_size()
-	numrowsgone = (maximum % size )
+	block = size + 1
+	numrowsgone = (maximum % block)
 
-	if(get_pos_y()==0):
-		pumkinBlock= pumkinBlock+1
-	
-	#if(get_pos_y())<6:
-	#	pumkinBlock= pumkinBlock-1
-		#if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
-			#plantGrass()
-		#else:
-		#	plantPumpkin()
-
-	#else:
-	if ((pumkinBlock % size == 0 ) or pumkinBlock >= maximum - numrowsgone):
+	if ((pumkinBlock % block == size) or pumkinBlock >= maximum - numrowsgone):
 		plantGrass()
 	else:
 		plantPumpkin()
@@ -92,11 +76,10 @@ def skipRows(rows):
 		move(East)
 
 
-skipRows(3)
+##skipRows(3)
 while True:
 	for i in range(get_world_size()):
 		
-
 		if (can_harvest()):
 			harvest()
 
@@ -114,5 +97,3 @@ while True:
 		move(North)
 
 	move(East)
-
-#get_entity_type
