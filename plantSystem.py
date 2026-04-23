@@ -2,18 +2,19 @@ import helpers
 import ressurceSystem
 import needSystem
 import unlockSystem
+import ensureSystem
 
 isTree=False
 
 def plantGrass():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Grass)):
-		helpers.ensureGround()
+		ensureSystem.ensureGround()
 		plant(Entities.Grass)
 
 def plantCarrot():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Carrots)):
 		if (ressurceSystem.carrotRessurces()):
-			helpers.ensureSoil()
+			ensureSystem.ensureSoil()
 			plant(Entities.Carrot)
 		else:
 			plantGrass()
@@ -21,7 +22,7 @@ def plantCarrot():
 def plantPumpkin():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Pumpkins)):
 		if (ressurceSystem.pumpkinRessurces()):
-			helpers.ensureSoil()
+			ensureSystem.ensureSoil()
 			plant(Entities.Pumpkin)
 			while not can_harvest():
 				needSystem.needsWater()
@@ -34,7 +35,7 @@ def plantPumpkin():
 def plantTree():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Trees)):
 		global isTree
-		helpers.ensureGround()
+		ensureSystem.ensureGround()
 		if (isTree):
 			plant(Entities.Bush)
 			isTree = False
@@ -45,5 +46,5 @@ def plantTree():
 
 def plantSunflower():
 	if(unlockSystem.entitiyIsUnlocked):
-		helpers.entitiyIsUnlocked(Unlocks.Sunflowers)
+		unlockSystem.entitiyIsUnlocked(Unlocks.Sunflowers)
 		print("TODO")
