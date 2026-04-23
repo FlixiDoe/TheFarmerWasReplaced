@@ -38,6 +38,9 @@ def plantPumpkin():
 	if (pumpkinRessurces()):
 		ensureSoil()
 		plant(Entities.Pumpkin)
+		do_a_flip()
+		while not can_harvest():
+			plant(Entities.Pumpkin)
 	else:
 		plantGrass()
 
@@ -83,3 +86,5 @@ while True:
 		move(North)
 
 	move(East)
+
+#get_entity_type
