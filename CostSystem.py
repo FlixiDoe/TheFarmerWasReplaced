@@ -1,5 +1,6 @@
 carrotCosts= [-1, -1]
 pumkinCosts= [-1]
+sunflowerCosts = [-1]
 
 
 def setCosts():
@@ -18,3 +19,8 @@ def setPumkinCosts():
 	costs= get_cost(Entities.Pumpkin)
 
 	pumkinCosts[0]= costs[Items.Carrot]
+
+def setSunflowerCosts():
+	global sunflowerCosts
+	costs= get_cost(Entities.Sunflower)
+	sunflowerCosts[0]= costs[Items.Carrot]

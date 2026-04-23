@@ -15,9 +15,8 @@ while True:
 
 		x = get_pos_x()
 
-		if (x == 0 or x == 11):
-			plantSystem.plantGrass()
-		elif (x == 1 or x == 10 or x== 13 or x==15):
+		
+		if (x == 1 or x == 10 or x== 13 or x==15):
 			plantSystem.plantTree()
 		elif (x == 2 or x == 8 or x == 9 or x==12 or x==14 ):
 			plantSystem.plantCarrot()
