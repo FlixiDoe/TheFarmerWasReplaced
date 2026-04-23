@@ -3,10 +3,17 @@ change_hat(Hats.Wizard_Hat)
 
 isTree = False
 
+#pumkinBlock = 0
 def carrotRessurces():
-	if (num_items(Items.Hay) >= 1 and num_items(Items.Wood) >= 1):
-		return True
+	if (num_items(Items.Hay) >= 16 and num_items(Items.Wood) >= 16):
+		if(get_ground_type= Grounds.till):
+			return True
+		else:
+			till()
+			return True
 	else:
+		if(get_ground_type= Grounds.till):
+			
 		return False
 			
 def pumpkinRessurces():
@@ -47,9 +54,20 @@ def SunnlowerHarvest():
 	measure()
 
 def PumkinPlace():
+		pumkinBlock= get_pos_y()
+		maximum= get_world_size()
+		numrowsgone = maximum%5
+		if ((pumkinBlock%5==0 and pumkinBlock!=0) or pumkinBlock> maximum-numrowsgone):
+				plant(Entities.Grass)
+				
+				#print(pumkinBlock)
+
+		else:
+			plantWithRessurces(Entities.Pumpkin)
+			#pumkinBlock = pumkinBlock+1
+			#print(pumkinBlock)
+
 		
-	for i in range (get_world_size % 5 ==  0):
-		plantWithRessurces(Entities.Pumpkin)
 	
 
 while True:
@@ -65,7 +83,7 @@ while True:
 			
 		x = get_pos_x()
 		
-		if (x == 0):
+		if (x == 0 or x==11):
 			plant(Entities.Grass)
 		elif (x == 1 or x==10):
 			TreePflanzen()
@@ -75,8 +93,10 @@ while True:
 			
 			PumkinPlace()
 			
-		elif (x==11): 	
+		elif (x==12): 	
 				SunnlowerHarvest()
 		move(North) 
 		
 	move(East)
+
+	#get_ground_type = Grounds.
