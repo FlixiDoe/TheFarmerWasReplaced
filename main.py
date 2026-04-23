@@ -65,7 +65,7 @@ def plantPumpkin():
 	else:
 		plantGrass()
 
-def TreePflanzen():
+def plantTree():
 	global isTree
 	ensureGround()
 	if (isTree):
@@ -114,7 +114,7 @@ while True:
 		if (x == 0 or x == 11):
 			plantGrass()
 		elif (x == 1 or x == 10 or x== 13 or x==15):
-			TreePflanzen()
+			plantTree()
 		elif (x == 2 or x == 8 or x == 9 or x==12 or x==14 ):
 			plantCarrot()
 		elif (x == 3 or x == 4 or x == 5 or x == 6 or x == 7):
