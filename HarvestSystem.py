@@ -1,4 +1,7 @@
 def normalHarvet():
-
-	if (can_harvest()):
-		harvest()
+	if(get_entity_type()==Entities.Sunflower):
+		return
+	else:
+		if (can_harvest()):
+			harvest()
+	
