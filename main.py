@@ -2,16 +2,10 @@ import costSystem
 import plantSystem
 import placeSystem
 
-
 clear()
 change_hat(Hats.Wizard_Hat)
 
-
-
-
-
 	
-##skipRows(3)
 while True:
 	costSystem.setCosts()
 	for i in range(get_world_size()):
