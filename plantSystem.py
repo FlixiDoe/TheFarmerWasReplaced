@@ -7,7 +7,6 @@ import ensureSystem
 isTree=False
 
 def plantGrass():
-	if(unlockSystem.entitiyIsUnlocked(Unlocks.Grass)):
 		ensureSystem.ensureGround()
 		plant(Entities.Grass)
 
@@ -45,7 +44,11 @@ def plantTree():
 		
 
 def plantSunflower():
-	if(unlockSystem.entitiyIsUnlocked):
+	if(unlockSystem.entitiyIsUnlocked(Unlocks.Sunflowers)):
 		if (ressurceSystem.SunflowerRessurces()):
-		
-			print("TODO")
+			change_hat(Hats.Brown_Hat)
+			ensureSystem.ensureSoil()
+			plant(Entities.Sunflower)
+		else:
+			plantGrass()
+			
