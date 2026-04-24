@@ -46,7 +46,7 @@ def plantTree():
 def plantSunflower():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Sunflowers)):
 		if (ressurceSystem.SunflowerRessurces()):
-			change_hat(Hats.Brown_Hat)
+			#change_hat(Hats.Brown_Hat)
 			ensureSystem.ensureSoil()
 			plant(Entities.Sunflower)
 		else:

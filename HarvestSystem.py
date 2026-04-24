@@ -3,5 +3,6 @@ def normalHarvet():
 		return
 	else:
 		if (can_harvest()):
+			#print("asdfvg")
 			harvest()
 	
