@@ -26,8 +26,7 @@ def plantPumpkin():
 			while not can_harvest():
 				needSystem.needsWater()
 				plant(Entities.Pumpkin)
-			
-			#needsFetrtilizer()
+				#needsFetrtilizer()
 		else:
 			plantGrass()
 
@@ -49,6 +48,6 @@ def plantSunflower():
 			#change_hat(Hats.Brown_Hat)
 			ensureSystem.ensureSoil()
 			plant(Entities.Sunflower)
+			## messung welche energie es hat muss hier rein
 		else:
 			plantGrass()
-			
