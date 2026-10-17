@@ -14,7 +14,7 @@ The README is partly generated from the current source files so the documentatio
 <!-- AUTO_DOCS_CONTENT_START -->
 ## Generated Snapshot
 
-Generated from the current repository files on 2026-10-16 13:25 Europe/Berlin.
+Generated from the current repository files on 2026-10-17 12:45 Europe/Berlin.
 
 ### Main Loop
 
