@@ -3,27 +3,48 @@
 This repository contains my modular farming setup for **The Farmer Was Replaced**.
 The README is partly generated from the current source files so the documentation stays aligned with the actual code.
 
+## Run in the game
+
+Copy the root-level Python modules into the same in-game script folder, preserving filename capitalization (including `HarvestSystem.py`). Start `main.py` from the game editor. It calls `clear()` at startup, selects the wizard hat and then works one column at a time until you stop it. Choose a farm where clearing the field is intended. The game supplies the movement commands, crop types and unlocks.
+
+Crop costs are refreshed for unlocked crops. A growing crop stays in place when supplies run short. A failed pumpkin planting attempt yields to the next plot, and a later pass can replant it when carrots are available.
+
+## Test changes offline
+
+From the repository root, run the tests with Python 3.11 or newer.
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+GitHub Actions runs this suite on Python 3.11 for pull requests and pushes to `main`. The tests supply the inventory, crop costs, unlocks, planting and movement calls with a simulated game API. This checks the repository logic on a host computer. Timing and behavior in a live save require the game. Running `main.py` directly in desktop Python requires the in-game API. To refresh the generated snapshot after changing module names or field routes, run `python3 scripts/update_readme_stamp.py`.
+
 ## Repository Notes
 
-- The documentation is AI-generated and AI-maintained.
-- The farm logic and gameplay code are written completely by hand.
+- The original gameplay code was written by hand. The generated documentation and later maintenance changes use AI assistance.
 - `main.py` is the entry point for the farm loop.
 - `__builtins__.py` and `save.json` stay local and are intentionally excluded from Git.
-- The generated section below is refreshed by GitHub Actions every day and can also be updated manually by running `python scripts/update_readme_stamp.py`.
+- The generated section below can be refreshed with `python scripts/update_readme_stamp.py`. A separate documentation workflow supports scheduled updates when enabled.
 
 <!-- AUTO_DOCS_CONTENT_START -->
 ## Generated Snapshot
 
-Generated from the current repository files on 2026-10-18 13:06 Europe/Berlin.
+Generated from the current repository files on 2026-11-23 21:57 Europe/Berlin.
 
 ### Main Loop
 
 - Entry point: `main.py`.
 - Imports: `costSystem`, `movingSystem`.
-- Refreshes crop costs once per full world pass with `costSystem.setCosts()`.
+- Refreshes crop costs before each movement column with `costSystem.setCosts()`.
 
 ### Field Layout
 
+- `x == 0` -> `plantSystem.plantCarrot()`.
+- `x == 10 or x == 13 or x == 15` -> `plantSystem.plantTree()`.
+- `x == 1 or x == 8 or x == 9 or (x == 12) or (x == 14)` -> `plantSystem.plantCarrot()`.
+- `x == 3 or x == 4 or x == 5 or (x == 6) or (x == 7)` -> `placeSystem.PumkinPlace(5)`.
+- `x == 2` -> `plantSystem.plantCarrot()`.
+- Fallback route -> `plantSystem.plantGrass()`.
 
 ### Module Overview
 
@@ -39,12 +60,18 @@ Generated from the current repository files on 2026-10-18 13:06 Europe/Berlin.
 - `unlockSystem.py`
   Imports: `plantSystem`.
   Functions: `ItemIsUnlocked`, `entitiyIsUnlocked`.
+- `costSystem.py`
+  Imports: none.
+  Functions: `setCosts`, `setCarrotCosts`, `setPumkinCosts`, `setSunflowerCosts`.
+- `ressurceSystem.py`
+  Imports: `costSystem`.
+  Functions: `pumpkinRessurces`, `carrotRessurces`, `SunflowerRessurces`.
 - `needSystem.py`
   Imports: `unlockSystem`.
   Functions: `needsWater`, `needsFetrtilizer`.
 - `ensureSystem.py`
   Imports: none.
-  Functions: `ensureSoil`, `ensureGround`.
+  Functions: `plotIsAvailable`, `ensureSoil`, `ensureGround`.
 - `helpers.py`
   Imports: none.
   Functions: `skipRows`.

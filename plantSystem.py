@@ -7,47 +7,45 @@ import ensureSystem
 isTree=False
 
 def plantGrass():
-		ensureSystem.ensureGround()
+	if ensureSystem.ensureGround():
 		plant(Entities.Grass)
 
 def plantCarrot():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Carrots)):
 		if (ressurceSystem.carrotRessurces()):
-			ensureSystem.ensureSoil()
-			plant(Entities.Carrot)
+			if ensureSystem.ensureSoil():
+				plant(Entities.Carrot)
 		else:
 			plantGrass()
 
 def plantPumpkin():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Pumpkins)):
-		if (ressurceSystem.pumpkinRessurces()):
-			ensureSystem.ensureSoil()
-			plant(Entities.Pumpkin)
-			while not can_harvest():
+		if get_entity_type() == Entities.Pumpkin:
+			if not can_harvest():
 				needSystem.needsWater()
-				plant(Entities.Pumpkin)
-				#needsFetrtilizer()
+		elif (ressurceSystem.pumpkinRessurces()):
+			if ensureSystem.ensureSoil() and plant(Entities.Pumpkin):
+				needSystem.needsWater()
 		else:
 			plantGrass()
 
 def plantTree():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Trees)):
 		global isTree
-		ensureSystem.ensureGround()
-		if (isTree):
-			plant(Entities.Bush)
-			isTree = False
-		else:
-			plant(Entities.Tree)
-			isTree = True
+		if ensureSystem.ensureGround():
+			if isTree:
+				plant(Entities.Bush)
+			else:
+				plant(Entities.Tree)
+		isTree = not isTree
 		
 
 def plantSunflower():
 	if(unlockSystem.entitiyIsUnlocked(Unlocks.Sunflowers)):
 		if (ressurceSystem.SunflowerRessurces()):
-			#change_hat(Hats.Brown_Hat)
-			ensureSystem.ensureSoil()
-			plant(Entities.Sunflower)
-			## messung welche energie es hat muss hier rein
+			if ensureSystem.ensureSoil():
+				#change_hat(Hats.Brown_Hat)
+				plant(Entities.Sunflower)
+				## messung welche energie es hat muss hier rein
 		else:
 			plantGrass()

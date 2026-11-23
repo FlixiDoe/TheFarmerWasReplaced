@@ -13,7 +13,9 @@ def carrotRessurces():
 	else:
 		return False
 def SunflowerRessurces():
-	if (num_items(Items.Carrot) >= costSystem.carrotCosts[0]):
-		return True
-	else:
+	if costSystem.sunflowerCosts == None:
 		return False
+	for item in costSystem.sunflowerCosts:
+		if num_items(item) < costSystem.sunflowerCosts[item]:
+			return False
+	return True
