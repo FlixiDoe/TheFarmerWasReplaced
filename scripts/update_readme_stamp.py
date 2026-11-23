@@ -143,21 +143,18 @@ def main() -> int:
         return 1
         
     readme = README_PATH.read_text(encoding="utf-8")
-    start_index = readme.find(START_MARKER)
-    end_index = readme.find(END_MARKER)
-    
-    if start_index == -1 or end_index == -1 or end_index < start_index:
-        print("Fehler: Marker <!-- AUTO_DOCS_CONTENT_START --> nicht in Readme.md gefunden.")
+    starts = list(re.finditer(rf"^{re.escape(START_MARKER)}$", readme, re.MULTILINE))
+    ends = list(re.finditer(rf"^{re.escape(END_MARKER)}$", readme, re.MULTILINE))
+
+    if len(starts) != 1 or len(ends) != 1 or starts[0].end() >= ends[0].start():
+        print("Fehler: Readme.md braucht genau eine Start- und eine Endmarker-Zeile in dieser Reihenfolge.")
         return 1
 
     generated_content = build_generated_block()
-    
-    # Wir behalten den Marker selbst bei
     updated = (
-        readme[:start_index] + 
-        START_MARKER + "\n" + 
-        generated_content + "\n" + 
-        readme[end_index:]
+        readme[:starts[0].end()] + "\n" +
+        generated_content + "\n" +
+        readme[ends[0].start():]
     )
 
     if updated == readme:

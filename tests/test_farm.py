@@ -1,3 +1,7 @@
+from contextlib import redirect_stdout
+from io import StringIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -5,7 +9,7 @@ from unittest.mock import patch
 import costSystem
 import plantSystem
 import ressurceSystem
-from scripts.update_readme_stamp import build_generated_block
+from scripts import update_readme_stamp
 
 
 class CropCostTests(unittest.TestCase):
@@ -64,9 +68,44 @@ class CropCostTests(unittest.TestCase):
 
 class DocumentationTests(unittest.TestCase):
     def test_documents_each_active_field_route(self):
-        section = build_generated_block().split("### Field Layout")[1].split("### Module Overview")[0]
+        section = update_readme_stamp.build_generated_block().split("### Field Layout")[1].split("### Module Overview")[0]
         self.assertEqual(section.count(" -> "), 6)
         self.assertIn("PumkinPlace", section)
         self.assertIn("plantTree", section)
         self.assertIn("plantGrass", section)
         self.assertNotIn("startSunflowerPlant", section)
+
+
+class ReadmeUpdateTests(unittest.TestCase):
+    def setUp(self):
+        directory = self.enterContext(TemporaryDirectory(dir=update_readme_stamp.REPO_ROOT))
+        self.readme = Path(directory) / "Readme.md"
+        self.enterContext(patch.object(update_readme_stamp, "README_PATH", self.readme))
+        self.enterContext(redirect_stdout(StringIO()))
+
+    def test_marker_mentions_in_prose_leave_handwritten_content_intact(self):
+        start = update_readme_stamp.START_MARKER
+        end = update_readme_stamp.END_MARKER
+        before = (f"# Farm notes\n\nThe section opens with `{start}`.\n"
+                  f"Keep these notes.\nThe section closes with `{end}`.\n\n")
+        after = "\nKeep these notes too.\n"
+        self.readme.write_text(f"{before}{start}\nStale snapshot\n{end}\n{after}", encoding="utf-8")
+
+        self.assertEqual(update_readme_stamp.main(), 0)
+        updated = self.readme.read_text(encoding="utf-8")
+        self.assertTrue(updated.startswith(f"{before}{start}\n## Generated Snapshot\n"), updated)
+        self.assertTrue(updated.endswith(f"{end}\n{after}"), updated)
+        self.assertNotIn("Stale snapshot", updated)
+
+    def test_duplicate_marker_lines_leave_the_readme_intact(self):
+        start = update_readme_stamp.START_MARKER
+        end = update_readme_stamp.END_MARKER
+        for markers in [(start, start, end), (start, end, end)]:
+            with self.subTest(markers=markers):
+                original = "\nKeep this text.\n".join(markers) + "\n"
+                self.readme.write_text(original, encoding="utf-8")
+
+                result = update_readme_stamp.main()
+
+                self.assertEqual(self.readme.read_text(encoding="utf-8"), original)
+                self.assertEqual(result, 1)
