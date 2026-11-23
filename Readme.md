@@ -14,16 +14,22 @@ The README is partly generated from the current source files so the documentatio
 <!-- AUTO_DOCS_CONTENT_START -->
 ## Generated Snapshot
 
-Generated from the current repository files on 2026-10-18 13:06 Europe/Berlin.
+Generated from the current repository files on 2026-11-23 21:22 Europe/Berlin.
 
 ### Main Loop
 
 - Entry point: `main.py`.
 - Imports: `costSystem`, `movingSystem`.
-- Refreshes crop costs once per full world pass with `costSystem.setCosts()`.
+- Refreshes crop costs before each movement column with `costSystem.setCosts()`.
 
 ### Field Layout
 
+- `x == 0` -> `plantSystem.plantCarrot()`.
+- `x == 10 or x == 13 or x == 15` -> `plantSystem.plantTree()`.
+- `x == 1 or x == 8 or x == 9 or (x == 12) or (x == 14)` -> `plantSystem.plantCarrot()`.
+- `x == 3 or x == 4 or x == 5 or (x == 6) or (x == 7)` -> `placeSystem.PumkinPlace(5)`.
+- `x == 2` -> `plantSystem.plantCarrot()`.
+- Fallback route -> `plantSystem.plantGrass()`.
 
 ### Module Overview
 
@@ -39,6 +45,12 @@ Generated from the current repository files on 2026-10-18 13:06 Europe/Berlin.
 - `unlockSystem.py`
   Imports: `plantSystem`.
   Functions: `ItemIsUnlocked`, `entitiyIsUnlocked`.
+- `costSystem.py`
+  Imports: none.
+  Functions: `setCosts`, `setCarrotCosts`, `setPumkinCosts`, `setSunflowerCosts`.
+- `ressurceSystem.py`
+  Imports: `costSystem`.
+  Functions: `pumpkinRessurces`, `carrotRessurces`, `SunflowerRessurces`.
 - `needSystem.py`
   Imports: `unlockSystem`.
   Functions: `needsWater`, `needsFetrtilizer`.

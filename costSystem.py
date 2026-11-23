@@ -1,11 +1,15 @@
 carrotCosts= [-1, -1]
 pumkinCosts= [-1]
-sunflowerCosts = [-1]
+sunflowerCosts = None
 
 
 def setCosts():
-	setCarrotCosts()
-	setPumkinCosts()
+	if num_unlocked(Unlocks.Carrots) > 0:
+		setCarrotCosts()
+	if num_unlocked(Unlocks.Pumpkins) > 0:
+		setPumkinCosts()
+	if num_unlocked(Unlocks.Sunflowers) > 0:
+		setSunflowerCosts()
 
 def setCarrotCosts():
 	global carrotCosts
@@ -22,5 +26,4 @@ def setPumkinCosts():
 
 def setSunflowerCosts():
 	global sunflowerCosts
-	costs= get_cost(Entities.Sunflower)
-	sunflowerCosts[0]= costs[Items.Carrot]
+	sunflowerCosts = get_cost(Entities.Sunflower)

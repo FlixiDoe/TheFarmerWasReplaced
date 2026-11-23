@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 from pathlib import Path
 import re
@@ -53,30 +54,27 @@ def format_inline_list(items: list[str]) -> str:
     return ", ".join(f"`{item}`" for item in items)
 
 def parse_route_rules(content: str) -> list[tuple[str, str]]:
-    lines = content.splitlines()
-    routes: list[tuple[str, str]] = []
-    for index, line in enumerate(lines):
-        stripped = line.strip()
-        if not stripped: continue
-        if (stripped.startswith("if ") or stripped.startswith("elif ")) and "x ==" in stripped:
-            condition_parts = stripped.split("(", 1)
-            condition = condition_parts[1].rsplit(")", 1)[0].strip() if len(condition_parts) > 1 else stripped
-            action = find_next_action(lines, index + 1)
-            routes.append((condition, action))
-        elif stripped == "else:":
-            action = find_next_action(lines, index + 1)
-            routes.append(("fallback", action))
-    return routes
+    movement = next((node for node in ast.parse(content).body
+                     if isinstance(node, ast.FunctionDef) and node.name == "startMove"), None)
+    if movement is None:
+        return []
 
-def find_next_action(lines: list[str], start_index: int) -> str:
-    call_pattern = re.compile(r"([A-Za-z_][A-Za-z0-9_\.]*)\((.*)\)")
-    for line in lines[start_index:]:
-        stripped = line.strip()
-        if not stripped: continue
-        match = call_pattern.match(stripped)
-        if match: return f"`{match.group(1)}(...)`"
-        return f"`{stripped}`"
-    return "`unknown`"
+    routes = []
+    for loop in movement.body:
+        if not isinstance(loop, ast.For):
+            continue
+        for branch in loop.body:
+            if not isinstance(branch, ast.If):
+                continue
+            while isinstance(branch, ast.If):
+                routes.append((ast.unparse(branch.test), ast.unparse(branch.body[0])))
+                if len(branch.orelse) == 1 and isinstance(branch.orelse[0], ast.If):
+                    branch = branch.orelse[0]
+                else:
+                    if branch.orelse:
+                        routes.append(("fallback", ast.unparse(branch.orelse[0])))
+                    break
+    return routes
 
 def build_main_loop_section(main_content: str) -> list[str]:
     lines = [
@@ -90,16 +88,16 @@ def build_main_loop_section(main_content: str) -> list[str]:
         f"- Imports: {format_inline_list(parse_imports(main_content))}.",
     ]
     if "costSystem.setCosts()" in main_content:
-        lines.append("- Refreshes crop costs once per full world pass with `costSystem.setCosts()`.")
+        lines.append("- Refreshes crop costs before each movement column with `costSystem.setCosts()`.")
     if "can_harvest()" in main_content and "harvest()" in main_content:
         lines.append("- Harvests a tile before replanting when `can_harvest()` is true.")
     
     lines.extend(["", "### Field Layout", ""])
-    for condition, action in parse_route_rules(main_content):
+    for condition, action in parse_route_rules(read_file("movingSystem.py")):
         if condition == "fallback":
-            lines.append(f"- Fallback route -> {action}.")
+            lines.append(f"- Fallback route -> `{action}`.")
         else:
-            lines.append(f"- `{condition}` -> {action}.")
+            lines.append(f"- `{condition}` -> `{action}`.")
     return lines
 
 def build_module_section() -> list[str]:
