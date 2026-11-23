@@ -31,7 +31,7 @@ class CropCostTests(unittest.TestCase):
             (costSystem, "num_unlocked", lambda key: int(key in self.unlocked)),
             (plantSystem, "Entities", entities), (plantSystem, "Unlocks", unlocks),
             (plantSystem, "plant", self.planted.append),
-            (plantSystem.ensureSystem, "ensureSoil", lambda: None),
+            (plantSystem.ensureSystem, "ensureSoil", lambda: True),
             (plantSystem.unlockSystem, "num_unlocked", lambda key: int(key in self.unlocked)),
             (ressurceSystem, "Items", items),
             (ressurceSystem, "num_items", lambda item: self.inventory.get(item, 0)),

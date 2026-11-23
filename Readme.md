@@ -14,7 +14,7 @@ The README is partly generated from the current source files so the documentatio
 <!-- AUTO_DOCS_CONTENT_START -->
 ## Generated Snapshot
 
-Generated from the current repository files on 2026-11-23 21:22 Europe/Berlin.
+Generated from the current repository files on 2026-11-23 21:57 Europe/Berlin.
 
 ### Main Loop
 
@@ -56,7 +56,7 @@ Generated from the current repository files on 2026-11-23 21:22 Europe/Berlin.
   Functions: `needsWater`, `needsFetrtilizer`.
 - `ensureSystem.py`
   Imports: none.
-  Functions: `ensureSoil`, `ensureGround`.
+  Functions: `plotIsAvailable`, `ensureSoil`, `ensureGround`.
 - `helpers.py`
   Imports: none.
   Functions: `skipRows`.
