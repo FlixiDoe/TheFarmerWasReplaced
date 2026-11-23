@@ -17,14 +17,14 @@ From the repository root, run the tests with Python 3.11 or newer.
 python3 -m unittest discover -s tests -v
 ```
 
-The test farm simulates crop growth, resource use and movement. Running `main.py` directly in desktop Python requires the in-game API. To refresh the generated snapshot after changing module names or field routes, run `python3 scripts/update_readme_stamp.py`.
+GitHub Actions runs this suite on Python 3.11 for pull requests and pushes to `main`. The tests supply the inventory, crop costs, unlocks, planting and movement calls with a simulated game API. This checks the repository logic on a host computer. Timing and behavior in a live save require the game. Running `main.py` directly in desktop Python requires the in-game API. To refresh the generated snapshot after changing module names or field routes, run `python3 scripts/update_readme_stamp.py`.
 
 ## Repository Notes
 
 - The original gameplay code was written by hand. The generated documentation and later maintenance changes use AI assistance.
 - `main.py` is the entry point for the farm loop.
 - `__builtins__.py` and `save.json` stay local and are intentionally excluded from Git.
-- The generated section below is refreshed by GitHub Actions every day and can also be updated manually by running `python scripts/update_readme_stamp.py`.
+- The generated section below can be refreshed with `python scripts/update_readme_stamp.py`. A separate documentation workflow supports scheduled updates when enabled.
 
 <!-- AUTO_DOCS_CONTENT_START -->
 ## Generated Snapshot
