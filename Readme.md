@@ -3,10 +3,25 @@
 This repository contains my modular farming setup for **The Farmer Was Replaced**.
 The README is partly generated from the current source files so the documentation stays aligned with the actual code.
 
+## Run in the game
+
+Copy the root-level Python modules into the same in-game script folder, preserving filename capitalization (including `HarvestSystem.py`). Start `main.py` from the game editor. It calls `clear()` at startup, selects the wizard hat and then works one column at a time until you stop it. Choose a farm where clearing the field is intended. The game supplies the movement commands, crop types and unlocks.
+
+Crop costs are refreshed for unlocked crops. A growing crop stays in place when supplies run short. A failed pumpkin planting attempt yields to the next plot, and a later pass can replant it when carrots are available.
+
+## Test changes offline
+
+From the repository root, run the tests with Python 3.11 or newer.
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+The test farm simulates crop growth, resource use and movement. Running `main.py` directly in desktop Python requires the in-game API. To refresh the generated snapshot after changing module names or field routes, run `python3 scripts/update_readme_stamp.py`.
+
 ## Repository Notes
 
-- The documentation is AI-generated and AI-maintained.
-- The farm logic and gameplay code are written completely by hand.
+- The original gameplay code was written by hand. The generated documentation and later maintenance changes use AI assistance.
 - `main.py` is the entry point for the farm loop.
 - `__builtins__.py` and `save.json` stay local and are intentionally excluded from Git.
 - The generated section below is refreshed by GitHub Actions every day and can also be updated manually by running `python scripts/update_readme_stamp.py`.
